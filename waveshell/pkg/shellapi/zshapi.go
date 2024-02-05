@@ -340,7 +340,7 @@ zmodload zsh/parameter;
 printf "\x00[%SECTIONSEP%]";
 pwd;
 printf "[%SECTIONSEP%]";
-env -0;
+env | tr '\12' '\0';
 printf "[%SECTIONSEP%]";
 typeset -p +H -m '*';
 printf "[%SECTIONSEP%]";
