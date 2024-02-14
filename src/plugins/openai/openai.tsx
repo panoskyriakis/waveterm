@@ -4,15 +4,12 @@
 import * as React from "react";
 import * as mobx from "mobx";
 import * as mobxReact from "mobx-react";
-import * as T from "../../types/types";
 import { debounce } from "throttle-debounce";
 import { boundMethod } from "autobind-decorator";
 import { PacketDataBuffer } from "../core/ptydata";
-import { Markdown } from "../../app/common/common";
+import { Markdown } from "@/elements";
 
 import "./openai.less";
-
-type OV<V> = mobx.IObservableValue<V>;
 
 type OpenAIOutputType = {
     model: string;
@@ -22,18 +19,18 @@ type OpenAIOutputType = {
 };
 
 class OpenAIRendererModel {
-    context: T.RendererContext;
-    opts: T.RendererOpts;
+    context: RendererContext;
+    opts: RendererOpts;
     isDone: OV<boolean>;
-    api: T.RendererModelContainerApi;
+    api: RendererModelContainerApi;
     savedHeight: number;
     loading: OV<boolean>;
     loadError: OV<string> = mobx.observable.box(null, { name: "renderer-loadError" });
     chatError: OV<string> = mobx.observable.box(null, { name: "renderer-chatError" });
     updateHeight_debounced: (newHeight: number) => void;
-    ptyDataSource: (termContext: T.TermContextUnion) => Promise<T.PtyDataType>;
+    ptyDataSource: (termContext: TermContextUnion) => Promise<PtyDataType>;
     packetData: PacketDataBuffer;
-    rawCmd: T.WebCmd;
+    rawCmd: WebCmd;
     output: OV<OpenAIOutputType>;
     version: OV<number>;
 
@@ -44,7 +41,7 @@ class OpenAIRendererModel {
         this.version = mobx.observable.box(0);
     }
 
-    initialize(params: T.RendererModelInitializeParams): void {
+    initialize(params: RendererModelInitializeParams): void {
         this.loading = mobx.observable.box(true, { name: "renderer-loading" });
         this.isDone = mobx.observable.box(params.isDone, { name: "renderer-isDone" });
         this.context = params.context;
@@ -58,7 +55,7 @@ class OpenAIRendererModel {
 
     @boundMethod
     packetCallback(packetAny: any) {
-        let packet: T.OpenAIPacketType = packetAny;
+        let packet: OpenAIPacketType = packetAny;
         if (packet == null) {
             return;
         }
@@ -107,7 +104,7 @@ class OpenAIRendererModel {
         return;
     }
 
-    updateOpts(update: T.RendererOptsUpdate): void {
+    updateOpts(update: RendererOptsUpdate): void {
         Object.assign(this.opts, update);
     }
 
@@ -162,7 +159,7 @@ class OpenAIRendererModel {
 
 @mobxReact.observer
 class OpenAIRenderer extends React.Component<{ model: OpenAIRendererModel }> {
-    renderPrompt(cmd: T.WebCmd) {
+    renderPrompt(cmd: WebCmd) {
         let cmdStr = cmd.cmdstr.trim();
         if (cmdStr.startsWith("/openai")) {
             let spaceIdx = cmdStr.indexOf(" ");
@@ -207,7 +204,7 @@ class OpenAIRenderer extends React.Component<{ model: OpenAIRendererModel }> {
                     <div
                         style={{
                             maxHeight: opts.maxSize.height,
-                            paddingRight: 5
+                            paddingRight: 5,
                         }}
                     >
                         <Markdown text={message} style={{ maxHeight: opts.maxSize.height }} />
@@ -236,18 +233,18 @@ class OpenAIRenderer extends React.Component<{ model: OpenAIRendererModel }> {
         let cmd = model.rawCmd;
         let styleVal: Record<string, any> = null;
         if (model.loading.get() && model.savedHeight >= 0 && model.isDone) {
-            styleVal = { 
+            styleVal = {
                 height: model.savedHeight,
-                maxHeight: model.opts.maxSize.height
+                maxHeight: model.opts.maxSize.height,
             };
         } else {
-            let maxWidth = model.opts.maxSize.width
-            if(maxWidth > 1000) {
-                maxWidth = 1000
+            let maxWidth = model.opts.maxSize.width;
+            if (maxWidth > 1000) {
+                maxWidth = 1000;
             }
-            styleVal = { 
+            styleVal = {
                 maxWidth: maxWidth,
-                maxHeight: model.opts.maxSize.height
+                maxHeight: model.opts.maxSize.height,
             };
         }
         let version = model.version.get();

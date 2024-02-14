@@ -4,31 +4,10 @@
 import * as React from "react";
 import * as mobxReact from "mobx-react";
 import * as mobx from "mobx";
-import { sprintf } from "sprintf-js";
-import { boundMethod } from "autobind-decorator";
-import { If, For, When, Otherwise, Choose } from "tsx-control-statements/components";
-import type {
-    RendererModelInitializeParams,
-    TermOptsType,
-    RendererContext,
-    RendererOpts,
-    SimpleBlobRendererComponent,
-    RendererModelContainerApi,
-    RendererPluginType,
-    PtyDataType,
-    RendererModel,
-    RendererOptsUpdate,
-    LineStateType,
-    LineType,
-    TermContextUnion,
-    RendererContainerType,
-} from "../../../types/types";
-import { debounce } from "throttle-debounce";
-import * as util from "../../../util/util";
-import { GlobalModel } from "../../../model/model";
 
-type OV<V> = mobx.IObservableValue<V>;
-type CV<V> = mobx.IComputedValue<V>;
+import { debounce } from "throttle-debounce";
+import * as util from "@/util";
+import { GlobalModel } from "@/models";
 
 class SimpleBlobRendererModel {
     context: RendererContext;
@@ -277,7 +256,7 @@ class SimpleBlobRenderer extends React.Component<
                     cwd={festate.cwd}
                     cmdstr={cmdstr}
                     exitcode={exitcode}
-                    data={model.dataBlob}
+                    data={model.dataBlob as ExtBlob}
                     readOnly={model.readOnly}
                     notFound={model.notFound}
                     lineState={model.lineState}

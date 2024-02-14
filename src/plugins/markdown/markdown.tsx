@@ -4,20 +4,23 @@
 import * as React from "react";
 import * as mobx from "mobx";
 import * as mobxReact from "mobx-react";
-import * as T from "../../types/types";
 import { sprintf } from "sprintf-js";
-import { Markdown } from "../../app/common/common";
+import { Markdown } from "@/elements";
 
 import "./markdown.less";
-
-type OV<V> = mobx.IObservableValue<V>;
 
 const MaxMarkdownSize = 200000;
 const DefaultMaxMarkdownWidth = 1000;
 
 @mobxReact.observer
 class SimpleMarkdownRenderer extends React.Component<
-    { data: T.ExtBlob; context: T.RendererContext; opts: T.RendererOpts; savedHeight: number, lineState: T.LineStateType },
+    {
+        data: ExtBlob;
+        context: RendererContext;
+        opts: RendererOpts;
+        savedHeight: number;
+        lineState: LineStateType;
+    },
     {}
 > {
     markdownText: OV<string> = mobx.observable.box(null, { name: "markdownText" });
@@ -74,7 +77,10 @@ class SimpleMarkdownRenderer extends React.Component<
                         maxHeight: opts.maxSize.height,
                     }}
                 >
-                    <Markdown text={this.markdownText.get()} style={{ maxHeight: opts.maxSize.height, maxWidth: DefaultMaxMarkdownWidth }} />
+                    <Markdown
+                        text={this.markdownText.get()}
+                        style={{ maxHeight: opts.maxSize.height, maxWidth: DefaultMaxMarkdownWidth }}
+                    />
                 </div>
             </div>
         );

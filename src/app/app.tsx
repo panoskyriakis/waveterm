@@ -7,10 +7,9 @@ import * as mobx from "mobx";
 import { boundMethod } from "autobind-decorator";
 import { If } from "tsx-control-statements/components";
 import dayjs from "dayjs";
-import type { ContextMenuOpts } from "../types/types";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import { GlobalModel } from "../model/model";
-import { isBlank } from "../util/util";
+import { GlobalModel } from "@/models";
+import { isBlank } from "@/util/util";
 import { WorkspaceView } from "./workspace/workspaceview";
 import { PluginsView } from "./pluginsview/pluginsview";
 import { BookmarksView } from "./bookmarks/bookmarks";
@@ -25,14 +24,12 @@ import "./app.less";
 
 dayjs.extend(localizedFormat);
 
-type OV<V> = mobx.IObservableValue<V>;
-
 @mobxReact.observer
 class App extends React.Component<{}, {}> {
     dcWait: OV<boolean> = mobx.observable.box(false, { name: "dcWait" });
     mainContentRef: React.RefObject<HTMLDivElement> = React.createRef();
 
-    constructor(props: any) {
+    constructor(props: {}) {
         super(props);
         if (GlobalModel.isDev) document.body.className = "is-dev";
     }

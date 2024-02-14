@@ -7,23 +7,22 @@ import * as mobx from "mobx";
 import { boundMethod } from "autobind-decorator";
 import cn from "classnames";
 import dayjs from "dayjs";
-import type { ClientDataType, RemoteType } from "../../types/types";
 import { If } from "tsx-control-statements/components";
 import { compareLoose } from "semver";
 
-import { ReactComponent as LeftChevronIcon } from "../assets/icons/chevron_left.svg";
-import { ReactComponent as AppsIcon } from "../assets/icons/apps.svg";
-import { ReactComponent as WorkspacesIcon } from "../assets/icons/workspaces.svg";
-import { ReactComponent as SettingsIcon } from "../assets/icons/settings.svg";
+import { ReactComponent as LeftChevronIcon } from "@/assets/icons/chevron_left.svg";
+import { ReactComponent as AppsIcon } from "@/assets/icons/apps.svg";
+import { ReactComponent as WorkspacesIcon } from "@/assets/icons/workspaces.svg";
+import { ReactComponent as SettingsIcon } from "@/assets/icons/settings.svg";
 
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import { GlobalModel, GlobalCommandRunner, Session, VERSION } from "../../model/model";
-import { isBlank, openLink } from "../../util/util";
-import { ResizableSidebar } from "../common/common";
-import * as constants from "../appconst";
+import { GlobalModel, GlobalCommandRunner, Session } from "@/models";
+import { isBlank, openLink } from "@/util/util";
+import { ResizableSidebar } from "@/common/elements";
+import * as appconst from "@/app/appconst";
 
 import "./sidebar.less";
-import { ActionsIcon, CenteredIcon, FrontIcon, StatusIndicator } from "../common/icons/icons";
+import { ActionsIcon, CenteredIcon, FrontIcon, StatusIndicator } from "@/common/icons/icons";
 
 dayjs.extend(localizedFormat);
 
@@ -167,7 +166,7 @@ class MainSideBar extends React.Component<MainSideBarProps, {}> {
         mobx.action(() => {
             GlobalModel.sessionSettingsModal.set(session.sessionId);
         })();
-        GlobalModel.modalsModel.pushModal(constants.SESSION_SETTINGS);
+        GlobalModel.modalsModel.pushModal(appconst.SESSION_SETTINGS);
     }
 
     getSessions() {
@@ -208,7 +207,7 @@ class MainSideBar extends React.Component<MainSideBarProps, {}> {
         let clientData = this.props.clientData;
         let needsUpdate = false;
         if (!clientData?.clientopts.noreleasecheck && !isBlank(clientData?.releaseinfo?.latestversion)) {
-            needsUpdate = compareLoose(VERSION, clientData.releaseinfo.latestversion) < 0;
+            needsUpdate = compareLoose(appconst.VERSION, clientData.releaseinfo.latestversion) < 0;
         }
         let mainSidebar = GlobalModel.mainSidebarModel;
         let isCollapsed = mainSidebar.getCollapsed();

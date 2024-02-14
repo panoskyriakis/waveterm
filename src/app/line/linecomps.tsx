@@ -9,46 +9,35 @@ import { boundMethod } from "autobind-decorator";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { If } from "tsx-control-statements/components";
-import { GlobalModel, GlobalCommandRunner, Cmd, getTermPtyData } from "../../model/model";
-import { termHeightFromRows } from "../../util/textmeasure";
-import type {
-    LineType,
-    RenderModeType,
-    RendererOpts,
-    RendererPluginType,
-    LineHeightChangeCallbackType,
-    RendererModelInitializeParams,
-    RendererModel,
-} from "../../types/types";
+import { GlobalModel, GlobalCommandRunner, Cmd } from "@/models";
+import { termHeightFromRows } from "@/util/textmeasure";
 import cn from "classnames";
+import { getTermPtyData } from "@/util/modelutil";
 
-import type { LineContainerModel } from "../../model/model";
-import { renderCmdText } from "../common/common";
-import { SimpleBlobRenderer } from "../../plugins/core/basicrenderer";
-import { IncrementalRenderer } from "../../plugins/core/incrementalrenderer";
-import { TerminalRenderer } from "../../plugins/terminal/terminal";
-import { isBlank } from "../../util/util";
-import { PluginModel } from "../../plugins/plugins";
-import { Prompt } from "../common/prompt/prompt";
+import { renderCmdText } from "@/common/elements";
+import { SimpleBlobRenderer } from "@/plugins/core/basicrenderer";
+import { IncrementalRenderer } from "@/plugins/core/incrementalrenderer";
+import { TerminalRenderer } from "@/plugins/terminal/terminal";
+import { isBlank } from "@/util/util";
+import { PluginModel } from "@/plugins/plugins";
+import { Prompt } from "@/common/prompt/prompt";
 import * as lineutil from "./lineutil";
-import { ErrorBoundary } from "../../app/common/error/errorboundary";
-import * as appconst from "../appconst";
+import { ErrorBoundary } from "@/common/error/errorboundary";
+import * as appconst from "@/app/appconst";
 
-import { ReactComponent as CheckIcon } from "../assets/icons/line/check.svg";
-import { ReactComponent as CommentIcon } from "../assets/icons/line/comment.svg";
-import { ReactComponent as QuestionIcon } from "../assets/icons/line/question.svg";
-import { ReactComponent as WarningIcon } from "../assets/icons/line/triangle-exclamation.svg";
-import { ReactComponent as XmarkIcon } from "../assets/icons/line/xmark.svg";
-import { ReactComponent as FillIcon } from "../assets/icons/line/fill.svg";
-import { ReactComponent as GearIcon } from "../assets/icons/line/gear.svg";
+import { ReactComponent as CheckIcon } from "@/assets/icons/line/check.svg";
+import { ReactComponent as CommentIcon } from "@/assets/icons/line/comment.svg";
+import { ReactComponent as QuestionIcon } from "@/assets/icons/line/question.svg";
+import { ReactComponent as WarningIcon } from "@/assets/icons/line/triangle-exclamation.svg";
+import { ReactComponent as XmarkIcon } from "@/assets/icons/line/xmark.svg";
+import { ReactComponent as FillIcon } from "@/assets/icons/line/fill.svg";
+import { ReactComponent as GearIcon } from "@/assets/icons/line/gear.svg";
 
-import { RotateIcon } from "../common/icons/icons";
+import { RotateIcon } from "@/common/icons/icons";
 
 import "./lines.less";
 
 dayjs.extend(localizedFormat);
-
-type OV<V> = mobx.IObservableValue<V>;
 
 @mobxReact.observer
 class SmallLineAvatar extends React.Component<{ line: LineType; cmd: Cmd; onRightClick?: (e: any) => void }, {}> {
@@ -101,7 +90,7 @@ class SmallLineAvatar extends React.Component<{ line: LineType; cmd: Cmd; onRigh
 @mobxReact.observer
 class LineCmd extends React.Component<
     {
-        screen: LineContainerModel;
+        screen: LineContainerType;
         line: LineType;
         width: number;
         staticRender: boolean;
@@ -799,7 +788,7 @@ class LineCmd extends React.Component<
 @mobxReact.observer
 class Line extends React.Component<
     {
-        screen: LineContainerModel;
+        screen: LineContainerType;
         line: LineType;
         width: number;
         staticRender: boolean;
@@ -830,7 +819,7 @@ class Line extends React.Component<
 @mobxReact.observer
 class LineText extends React.Component<
     {
-        screen: LineContainerModel;
+        screen: LineContainerType;
         line: LineType;
         renderMode: RenderModeType;
         noSelect?: boolean;

@@ -18,9 +18,9 @@ import {
     genMergeSimpleData,
     boundInt,
     isModKeyPress,
-} from "../util/util";
-import { TermWrap } from "../plugins/terminal/term";
-import { PluginModel } from "../plugins/plugins";
+} from "@/util/util";
+import { TermWrap } from "@/plugins/terminal/term";
+import { PluginModel } from "@/plugins/plugins";
 import {
     SessionDataType,
     LineType,
@@ -51,6 +51,8 @@ import {
     HistoryViewDataType,
     AlertMessageType,
     HistorySearchParams,
+    UserInputRequest,
+    UserInputResponsePacket,
     FocusTypeStrs,
     ScreenLinesType,
     HistoryTypeStrs,
@@ -74,15 +76,15 @@ import {
     windowHeightToRows,
     termWidthFromCols,
     termHeightFromRows,
-} from "../util/textmeasure";
+} from "@/util/textmeasure";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { getRendererContext, cmdStatusIsRunning } from "../app/line/lineutil";
-import { MagicLayout } from "../app/magiclayout";
-import { modalsRegistry } from "../app/common/modals/registry";
-import * as appconst from "../app/appconst";
-import { checkKeyPressed, adaptFromReactOrNativeKeyEvent, setKeyUtilPlatform } from "../util/keyutil";
+import { getRendererContext, cmdStatusIsRunning } from "@/app/line/lineutil";
+import { MagicLayout } from "@/app/magiclayout";
+import { modalsRegistry } from "@/modals/registry";
+import * as appconst from "@/app/appconst";
+import { checkKeyPressed, adaptFromReactOrNativeKeyEvent, setKeyUtilPlatform } from "@/util/keyutil";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(localizedFormat);
@@ -3376,14 +3378,14 @@ class RemotesModel {
 }
 
 class ModalsModel {
-    store: OArr<T.ModalStoreEntry> = mobx.observable.array([], { name: "ModalsModel-store" });
+    store: OArr<T.ModalStoreEntry> = mobx.observable.array([], { name: "ModalsModel-store", deep: false });
 
-    pushModal(modalId: string) {
+    pushModal(modalId: string, props?: any) {
         const modalFactory = modalsRegistry[modalId];
 
         if (modalFactory && !this.store.some((modal) => modal.id === modalId)) {
             mobx.action(() => {
-                this.store.push({ id: modalId, component: modalFactory, uniqueKey: uuidv4() });
+                this.store.push({ id: modalId, component: modalFactory, uniqueKey: uuidv4(), props: props });
             })();
         }
     }
@@ -4184,6 +4186,10 @@ class Model {
                 this.getScreenById_single(snc.screenid)?.setNumRunningCmds(snc.num);
             }
         }
+        if ("userinputrequest" in update) {
+            let userInputRequest: UserInputRequest = update.userinputrequest;
+            this.modalsModel.pushModal(appconst.USER_INPUT, userInputRequest);
+        }
     }
 
     updateRemotes(remotes: RemoteType[]): void {
@@ -4589,6 +4595,10 @@ class Model {
 
     sendInputPacket(inputPacket: any) {
         this.ws.pushMessage(inputPacket);
+    }
+
+    sendUserInput(userInputResponsePacket: UserInputResponsePacket) {
+        this.ws.pushMessage(userInputResponsePacket);
     }
 
     sendCmdInputText(screenId: string, sp: T.StrWithPos) {
